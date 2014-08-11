@@ -1,0 +1,57 @@
+#!/bin/bash
+
+touch /home/cron_sh/cron_mail.txt
+echo "#####################################################################" > /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "VIVAELBACKUP TITLE: OKY-COKY" >> /home/cron_sh/cron_mail.txt
+echo "VIVAELBACKUP DATE: `date`" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "#####################################################################" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "DATA BASE BACKUPS" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+
+_now=$(date +"%Y%m%d")
+mysqldump -uroot -pn1nkt3c okycoky_newseason > "/home/www/newseason/sql/backup_$_now.sql"
+echo "SQL BACKUP Newseason [OK]" >> /home/cron_sh/cron_mail.txt
+mysqldump -uroot -pn1nkt3c okycoky > "/home/www/retailers/sql/backup_$_now.sql"
+echo "SQL BACKUP Retailers [OK]" >> /home/cron_sh/cron_mail.txt
+mysqldump -uroot -pn1nkt3c okycoky_classics > "/home/www/classics/sql/backup_$_now.sql"
+echo "SQL BACKUP Classics [OK]" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "GIT BACKUPS" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "Git Newseason" >> /home/cron_sh/cron_mail.txt
+cd /home/www/newseason >> /home/cron_sh/cron_mail.txt
+git add --all >> /home/cron_sh/cron_mail.txt
+git commit -m "`date`" >> /home/cron_sh/cron_mail.txt
+git push origin master >> /home/cron_sh/cron_mail.txt
+
+echo "Git Retailers" >> /home/cron_sh/cron_mail.txt
+cd /home/www/retailers >> /home/cron_sh/cron_mail.txt
+git add --all >> /home/cron_sh/cron_mail.txt
+git commit -m "`date`" >> /home/cron_sh/cron_mail.txt
+git push origin master >> /home/cron_sh/cron_mail.txt
+
+echo "Git classics" >> /home/cron_sh/cron_mail.txt
+cd /home/www/classics >> /home/cron_sh/cron_mail.txt
+git add --all >> /home/cron_sh/cron_mail.txt
+git commit -m "`date`" >> /home/cron_sh/cron_mail.txt
+git push origin master >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "HARD DISK STATUS" >> /home/cron_sh/cron_mail.txt
+echo "---------------------------------------------------------------------" >> /home/cron_sh/cron_mail.txt
+echo "" >> /home/cron_sh/cron_mail.txt
+echo "SMART /dev/sda" >> /home/cron_sh/cron_mail.txt
+smartctl -a /dev/sda | grep "SMART overall-health self-assessment" >> /home/cron_sh/cron_mail.txt
+
+echo "SMART /dev/sdb" >> /home/cron_sh/cron_mail.txt
+smartctl -a /dev/sdb | grep "SMART overall-health self-assessment" >> /home/cron_sh/cron_mail.txt
+
+cat /home/cron_sh/cron_mail.txt | mail -s "[VivaElBackup] OKY-COKY `date`" enrealidadeshotmail@gmail.com
+
